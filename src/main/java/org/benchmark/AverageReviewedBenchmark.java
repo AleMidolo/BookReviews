@@ -35,7 +35,7 @@ public class AverageReviewedBenchmark {
 			reviews = ed.getReviews();
 		}
     }
-    
+   /* 
 	@Warmup(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
 	@Fork(value=1, warmups=1)
 	@OutputTimeUnit(TimeUnit.SECONDS)
@@ -56,5 +56,5 @@ public class AverageReviewedBenchmark {
 		MainClass.extractAverageReviewedAuthorParallel(mystate.books, mystate.reviews);
 		long stopTime = System.nanoTime();
 		System.out.println("Total Time: " + TimeUnit.MILLISECONDS.convert((stopTime - startTime), TimeUnit.NANOSECONDS));
-	}
+	}*/
 }

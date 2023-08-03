@@ -34,18 +34,7 @@ public class MostReviewedBenchmark {
 			reviews = ed.getReviews();
 		}
     }
-    
-	@Warmup(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
-	@Fork(value=1, warmups=1)
-	@OutputTimeUnit(TimeUnit.SECONDS)
-	@Benchmark
-    public static void mostReviewedAuthorSequential(MyState myState) {
-		long startTime = System.nanoTime();
-		MainClass.extractMostReviewedAuthor(myState.books, myState.reviews);
-		long stopTime = System.nanoTime();
-		System.out.println("Total Time: " + TimeUnit.MILLISECONDS.convert((stopTime - startTime), TimeUnit.NANOSECONDS));
-	}
-
+	
 	@Warmup(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
 	@Fork(value=1, warmups=1)
 	@OutputTimeUnit(TimeUnit.SECONDS)

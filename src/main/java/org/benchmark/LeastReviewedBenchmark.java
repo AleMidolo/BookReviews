@@ -35,6 +35,7 @@ public class LeastReviewedBenchmark {
 		}
     }
 
+	/*
 	@Warmup(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
 	@Fork(value=1, warmups=1)
 	@OutputTimeUnit(TimeUnit.SECONDS)
@@ -55,5 +56,5 @@ public class LeastReviewedBenchmark {
 		MainClass.extractLeastReviewedAuthorParallel(myState.books, myState.reviews);
 		long stopTime = System.nanoTime();
 		System.out.println("Total Time: " + TimeUnit.MILLISECONDS.convert((stopTime - startTime), TimeUnit.NANOSECONDS));
-	}
+	}*/
 }

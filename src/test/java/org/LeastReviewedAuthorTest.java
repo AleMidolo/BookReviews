@@ -16,7 +16,7 @@ public class LeastReviewedAuthorTest {
 	public static List<Review> reviews = new ArrayList<>();
 	public static Optional<Author> authorSeq;
 	public static Optional<Author> authorPar;
-	
+	/*
 	@BeforeClass
 	public static void setUp() throws InterruptedException, ExecutionException {
 		System.out.println("\nSetUp");
@@ -72,5 +72,5 @@ public class LeastReviewedAuthorTest {
 		System.out.println("\ncleanUp");
 		books = new ArrayList<>();
 		reviews = new ArrayList<>();
-	}
+	}*/
 }

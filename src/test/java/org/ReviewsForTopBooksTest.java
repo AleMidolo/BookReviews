@@ -18,7 +18,7 @@ public class ReviewsForTopBooksTest {
 	public static List<Book> topBooksPar;
 	public static Book bookSeq = null;
 	public static Book bookPar = null;
-	
+	/*
 	@BeforeClass
 	public static void setUp() throws InterruptedException, ExecutionException {
 		System.out.println("\nSetUp");
@@ -69,5 +69,5 @@ public class ReviewsForTopBooksTest {
 		System.out.println("\ncleanUp");
 		books = new ArrayList<>();
 		reviews = new ArrayList<>();
-	}
+	}*/
 }

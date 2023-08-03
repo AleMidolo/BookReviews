@@ -9,7 +9,7 @@ import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Warmup;
 
 public class ExtractBenchmark {
-	
+	/*
 	@Warmup(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
 	@Fork(value=1, warmups=1)
 	@OutputTimeUnit(TimeUnit.SECONDS)
@@ -32,5 +32,5 @@ public class ExtractBenchmark {
 		ed.extractFromDatasetParallel();
 		long stopTime = System.nanoTime();
 		System.out.println("Total Time: " + TimeUnit.MILLISECONDS.convert((stopTime - startTime), TimeUnit.NANOSECONDS));
-	}
+	}*/
 }

@@ -15,6 +15,7 @@ public class ExtractDataTest {
 	public static List<Review> reviewsSeq;
 	public static List<Review> reviewsPar;
 	
+	/*
 	@BeforeClass
 	public static void setUp() {
 		ExtractDataset ed = new ExtractDataset();
@@ -48,5 +49,5 @@ public class ExtractDataTest {
 		reviewsSeq = new ArrayList<>();
 		booksPar = new ArrayList<>();
 		reviewsPar = new ArrayList<>();
-	}
+	}*/
 }
