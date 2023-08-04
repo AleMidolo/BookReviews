@@ -1,6 +1,7 @@
 package org;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -12,11 +13,11 @@ import org.junit.Test;
 
 public class LeastReviewedAuthorTest {
 	
-	public static List<Book> books = new ArrayList<>();
+	public static HashMap<String, Book> books = new HashMap<>();
 	public static List<Review> reviews = new ArrayList<>();
 	public static Optional<Author> authorSeq;
 	public static Optional<Author> authorPar;
-	/*
+	
 	@BeforeClass
 	public static void setUp() throws InterruptedException, ExecutionException {
 		System.out.println("\nSetUp");
@@ -57,20 +58,20 @@ public class LeastReviewedAuthorTest {
 		
 		if(authorSeq.isPresent() && authorPar.isPresent()) {
 
-			Book bSeq = authorSeq.get().getBooks().get(0);
-			Book bPar = authorPar.get().getBooks().get(0);
+			Book bookSeq = authorSeq.get().getBooks().stream().min((val1, val2) -> val1.getReviews().size() > val2.getReviews().size() ? 1 : -1).get();
+			Book bookpar = authorPar.get().getBooks().stream().min((val1, val2) -> val1.getReviews().size() > val2.getReviews().size() ? 1 : -1).get();
 			
-			System.out.println("Least Number of reviews: " + bSeq.getNumberOfReviews() + "---" + bPar.getNumberOfReviews());
-			Assert.assertEquals(bSeq.getNumberOfReviews(), bPar.getNumberOfReviews());
+			System.out.println("Least Number of reviews: " + bookSeq.getReviews().size() + "---" + bookpar.getReviews().size());
+			Assert.assertEquals(bookSeq.getReviews().size(), bookpar.getReviews().size());
 		}
 		else
 			Assert.assertTrue("Authors not present", false);
 	}
 	
 	@AfterClass
-	public void cleanUp() {
+	public static void cleanUp() {
 		System.out.println("\ncleanUp");
-		books = new ArrayList<>();
+		books = new HashMap<>();
 		reviews = new ArrayList<>();
-	}*/
+	}
 }

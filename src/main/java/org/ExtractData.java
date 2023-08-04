@@ -1,26 +1,25 @@
 package org;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
-import java.util.concurrent.TimeUnit;
+
 
 public class ExtractData {
 	
-	private List<Book> books;
+	private HashMap<String, Book> books;
 	private List<Review> reviews;
 	
-	public ExtractData(List<Book> books, List<Review> reviews) {
+	public ExtractData(HashMap<String, Book> books, List<Review> reviews) {
 		this.books = books;
 		this.reviews = reviews;
 	}
 
-	public List<Book> getBooks() {
+	public HashMap<String, Book> getBooks() {
 		return books;
 	}
 	
@@ -28,166 +27,110 @@ public class ExtractData {
 		return reviews;
 	}
 	
-	public HashMap<String, Author> getAuthorsHash() {
+	public HashMap<String, Author> getAuthors() {
 		System.out.println("getAuthors");
-		long startTime = System.nanoTime();
 		HashMap<String, Author> authors = new HashMap<>();
 		
-		books.forEach(b -> {
-			String authorsNames = b.getAuthors().replace("\"", "");
-			String[] splitted = authorsNames.split(",");
-			
-			for(String s : splitted) {
-				s = s.replace("'", "");
-				s = s.replace("[", "");
-				s = s.replace("]", "");
-				
-				String name = s.trim();
-				
-				Author author = authors.get(name);
-				if(author != null)
-					author.addBook(b);
-				else {
-					Author ath = new Author(name);
-					ath.addBook(b);
-					authors.put(name, ath);
-				}
+		books.values().forEach(b -> {
+			Author author = authors.get(b.getAuthors());
+			if(author != null)
+				author.addBook(b);
+			else {
+				Author ath = new Author(b.getAuthors());
+				ath.addBook(b);
+				authors.put(b.getAuthors(), ath);
 			}
 		});
 		
-		long stopTime = System.nanoTime();
-		System.out.println("getAuthorsHash Time: " + TimeUnit.MILLISECONDS.convert((stopTime - startTime), TimeUnit.NANOSECONDS));
 		return authors;
 	}
 	
-	public List<Author> getAuthorsList() {
-		System.out.println("getAuthors");
-		long startTime = System.nanoTime();
-		List<Author> authors = new ArrayList<>();
+	public HashMap<String, User> getUserForAuthor() {
+		System.out.println("getUserForAuthor");
+		HashMap<String, User> users = new HashMap<>();
 		
-		books.forEach(b -> {
-			String authorsNames = b.getAuthors().replace("\"", "");
-			String[] splitted = authorsNames.split(",");
-			
-			for(String s : splitted) {
-				s = s.replace("'", "");
-				s = s.replace("[", "");
-				s = s.replace("]", "");
-				
-				String name = s.trim();
-				
-				Optional<Author> author = authors.stream().filter(a -> a.getFullName().equals(name)).findFirst();
-				if(author.isPresent())
-					author.get().addBook(b);
-				else {
-					Author ath = new Author(name);
-					ath.addBook(b);
-					authors.add(ath);
-				}
-			}
-		});
-		
-		long stopTime = System.nanoTime();
-		System.out.println("getAuthorsList Time: " + TimeUnit.MILLISECONDS.convert((stopTime - startTime), TimeUnit.NANOSECONDS));
-		return authors;
-	}
-	
-	public Optional<Author> checkAuthor(List<Author> list, String name) {
-		return list.stream().
-			filter(a -> a.getFullName().equals(name)).
-			findFirst();
-	}
-	
-	public List<Book> getBooksWithHighestScore() {
-		System.out.println("getBooksWithHighestScore");
-		List<Book> listOfBooks = new ArrayList<>();
 		reviews.forEach(r -> {
-			if(r.getScore().equals("5.0")) {
-				Optional<Book> book = books.stream().filter(b -> b.getTitle().equals(r.getTitle())).findFirst();
-				if(book.isPresent() && !listOfBooks.contains(book.get()))
-					listOfBooks.add(book.get());
-			}
-		});
-		return listOfBooks;
-	}
-	
-	public HashMap<String, Integer> getReviewsForBookWithBook() {
-		System.out.println("getReviewsForBook");
-		HashMap<String, Integer> map = new HashMap<>();
-		reviews.forEach(r -> {
-			Optional<Book> book = books.parallelStream().filter(b -> b.getTitle().equals(r.getTitle())).findFirst();
-			if(book.isPresent())
-				book.get().setNumberOfReviews(book.get().getNumberOfReviews()+1);
+			User user = users.get(r.getUserID());
 			
-			Integer value = map.get(r.getTitle());
-			if(value == null) 
-				map.put(r.getTitle(), 1);
+			if(user != null)
+				user.addReview(r);
 			else {
-				Integer val = value+1;
-				map.put(r.getTitle(), val);
+				User usr = new User(r.getUserID(), r.getProfileName());
+				usr.addReview(r);
+				users.put(r.getUserID(), usr);
 			}
 		});
 		
-		return map;
+		updateBooksReviews();
+		return users;
 	}
 	
-	public HashMap<String, Integer> getReviewsForBook() {
+	public void updateBooksReviews() {
 		System.out.println("getReviewsForBook");
-		HashMap<String, Integer> map = new HashMap<>();
+		books.values().forEach(b -> b.resetReviews());
 		reviews.forEach(r -> {
-			
-			Integer value = map.get(r.getTitle());
-			if(value == null) 
-				map.put(r.getTitle(), 1);
-			else {
-				Integer val = value+1;
-				map.put(r.getTitle(), val);
-			}
+			Book b = books.get(r.getTitle());
+			if(b != null)
+				b.addReview(r);
 		});
-		
-		return map;
+		books.values().forEach(b -> b.updateMediumScore());
 	}
 	
-	public Map.Entry<String, Integer> getMostReviewedBook() {
+	public Optional<Book> getMostReviewedBook() {
 		System.out.println("getMostReviewedBook");
-		long startTime = System.nanoTime();
-		HashMap<String, Integer> reviewsForBook = getReviewsForBook();
-
-		Map.Entry<String, Integer> value = Collections.max(reviewsForBook.entrySet(), Map.Entry.comparingByValue());
-		long stopTime = System.nanoTime();
-		System.out.println(value.getKey() + "---" + value.getValue());
-		System.out.println("getMostReviewsBook Time: " + TimeUnit.MILLISECONDS.convert((stopTime - startTime), TimeUnit.NANOSECONDS));
-		return value;
+		updateBooksReviews();
+		
+		OptionalInt maximum = books.values().stream().
+			mapToInt(b -> b.getReviews().size()).
+			max();
+		
+		if(maximum.isPresent()) {
+			Optional<Book> book = books.values().stream().
+					filter(e -> e.getReviews().size() == maximum.getAsInt()).
+					findFirst();
+			return book;
+		}
+		return Optional.empty();
 	}
 	
-	/*
+	
 	public Optional<Book> getLeastReviewedBook() {
 		System.out.println("getLeastReviewedBooks");
-		HashMap<Book, Integer> reviewsForBook = getReviewsForBook();
-		OptionalInt minimum = reviewsForBook.values().stream().
-				mapToInt(i -> i).
+		updateBooksReviews();
+		OptionalInt minimum = books.values().stream().
+				mapToInt(b -> b.getReviews().size()).
 				min();
 		
-		if(minimum.isPresent())
-			return reviewsForBook.keySet().stream().
-					filter(k -> reviewsForBook.get(k).equals(minimum.getAsInt())).
+		if(minimum.isPresent()) {
+			Optional<Book> book = books.values().stream().
+					filter(b -> b.getReviews().size() == minimum.getAsInt()).
 					findFirst();
-		
+			return book;
+		}
 		return Optional.empty();
 	}
 	
 	public Optional<Book> getAverageReviewedBook() {
 		System.out.println("getAverageReviewedBook");
-		HashMap<Book, Integer> reviewsForBook = getReviewsForBook();
-		OptionalDouble average = reviewsForBook.values().stream().
-				mapToInt(i -> i).
+		updateBooksReviews();
+		OptionalDouble average = books.values().stream().
+				filter(b -> b.getReviews().size() > 0).
+				mapToInt(b -> b.getReviews().size()).
 				average();
-		
-		if(average.isPresent())
-			return reviewsForBook.keySet().stream().
-					filter(k -> reviewsForBook.get(k).equals((int)average.getAsDouble())).
+
+		if(average.isPresent()) {
+			int val = books.values().stream().
+					filter(b -> b.getReviews().size() > 0).
+					map(b -> b.getReviews().size()).
+		            min(Comparator.comparingInt(i -> Math.abs(i - (int)average.getAsDouble()))).
+		            orElseThrow(() -> new NoSuchElementException("No value present"));
+			
+			Optional<Book> book = books.values().stream().
+					filter(b -> b.getReviews().size() == val).
 					findFirst();
+			return book;
+		}
 		
 		return Optional.empty();
-	}*/
+	}
 }

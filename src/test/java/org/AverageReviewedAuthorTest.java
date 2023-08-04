@@ -1,6 +1,7 @@
 package org;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -11,12 +12,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class AverageReviewedAuthorTest {
-
-	public static List<Book> books = new ArrayList<>();
+	
+	public static HashMap<String, Book> books = new HashMap<>();
 	public static List<Review> reviews = new ArrayList<>();
 	public static Optional<Author> authorSeq;
 	public static Optional<Author> authorPar;
-	/*
+	
 	@BeforeClass
 	public static void setUp() throws InterruptedException, ExecutionException {
 		System.out.println("\nSetUp");
@@ -60,17 +61,17 @@ public class AverageReviewedAuthorTest {
 			Book bSeq = authorSeq.get().getBooks().get(0);
 			Book bPar = authorPar.get().getBooks().get(0);
 			
-			System.out.println("Average Number of reviews: " + bSeq.getNumberOfReviews() + "---" + bPar.getNumberOfReviews());
-			Assert.assertEquals(bSeq.getNumberOfReviews(), bPar.getNumberOfReviews());
+			System.out.println("Average Number of reviews: " + bSeq.getReviews().size() + "---" + bPar.getReviews().size());
+			Assert.assertEquals(bSeq.getReviews().size(), bPar.getReviews().size());
 		}
 		else
 			Assert.assertTrue("Authors not present", false);
 	}
 	
 	@AfterClass
-	public void cleanUp() {
+	public static void cleanUp() {
 		System.out.println("\ncleanUp");
-		books = new ArrayList<>();
+		books = new HashMap<>();
 		reviews = new ArrayList<>();
-	}*/
+	}
 }

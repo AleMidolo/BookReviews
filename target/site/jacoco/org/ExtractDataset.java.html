@@ -3,55 +3,55 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 
 public class ExtractDataset {
 	
-	private List&lt;Book&gt; books;
+	private HashMap&lt;String, Book&gt; books;
 	private List&lt;Review&gt; reviews;
 	
-<span class="fc" id="L15">	public ExtractDataset() {</span>
-<span class="fc" id="L16">		books = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L17">		reviews = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L18">	}</span>
+<span class="fc" id="L16">	public ExtractDataset() {</span>
+<span class="fc" id="L17">		books = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L18">		reviews = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L19">	}</span>
 
 	private List&lt;Review&gt; extractReviews() {
-<span class="fc" id="L21">		System.out.println(&quot;Extract Reviews...&quot;);</span>
-<span class="fc" id="L22">		List&lt;Review&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L23">		try (BufferedReader br = new BufferedReader(new FileReader(&quot;/Users/midolo/workspace/bookReviewer/books_rating.csv&quot;))) {</span>
-		    String line;
-<span class="fc bfc" id="L25" title="All 2 branches covered.">		    while ((line = br.readLine()) != null) {</span>
-<span class="fc" id="L26">		    	 String[] tokens = line.split(&quot;,(?=(?:[^\&quot;]*\&quot;[^\&quot;]*\&quot;)*[^\&quot;]*$)&quot;, -1);</span>
-<span class="fc" id="L27">		    	 String title = tokens[1].replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
-<span class="fc" id="L28">		    	 Review review = new Review(tokens[0] , title, tokens[2], tokens[3], tokens[4], tokens[5], tokens[6], tokens[7], tokens[8], tokens[9]);</span>
-<span class="fc" id="L29">		         list.add(review);</span>
-<span class="fc" id="L30">		    }</span>
+<span class="fc" id="L22">		System.out.println(&quot;Extract Reviews...&quot;);</span>
+<span class="fc" id="L23">		List&lt;Review&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L24">		try (BufferedReader br = new BufferedReader(new FileReader(&quot;books_rating.csv&quot;))) {</span>
+<span class="fc" id="L25">		    String line = br.readLine();</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">		    while ((line = br.readLine()) != null) {</span>
+<span class="fc" id="L27">		    	 String[] tokens = line.split(&quot;,(?=(?:[^\&quot;]*\&quot;[^\&quot;]*\&quot;)*[^\&quot;]*$)&quot;, -1);</span>
+<span class="fc" id="L28">		    	 String title = tokens[1].replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+<span class="fc" id="L29">		    	 Review review = new Review(tokens[0] , title, tokens[2], tokens[3], tokens[4], tokens[5], tokens[6], tokens[7], tokens[8], tokens[9]);</span>
+<span class="fc" id="L30">		         list.add(review);</span>
+<span class="fc" id="L31">		    }</span>
 		}
-<span class="nc" id="L32">		catch (Exception e) {</span>
-			// TODO Auto-generated catch block
+<span class="nc" id="L33">		catch (Exception e) {</span>
 <span class="nc" id="L34">			e.printStackTrace();</span>
 <span class="fc" id="L35">		}</span>
 <span class="fc" id="L36">		return list;</span>
 	}
 	
-	private List&lt;Book&gt; extractBooks(){
+	private HashMap&lt;String, Book&gt; extractBooks(){
 <span class="fc" id="L40">		System.out.println(&quot;Extract Books...&quot;);</span>
-<span class="fc" id="L41">		List&lt;Book&gt; list = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L42">		try (BufferedReader br = new BufferedReader(new FileReader(&quot;/Users/midolo/workspace/bookReviewer/books_data.csv&quot;))) {</span>
-		    String line;
+<span class="fc" id="L41">		HashMap&lt;String, Book&gt; map = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L42">		try (BufferedReader br = new BufferedReader(new FileReader(&quot;books_data.csv&quot;))) {</span>
+<span class="fc" id="L43">		    String line = br.readLine();</span>
 <span class="fc bfc" id="L44" title="All 2 branches covered.">		    while ((line = br.readLine()) != null) {</span>
 <span class="fc" id="L45">		    	 String[] tokens = line.split(&quot;,(?=(?:[^\&quot;]*\&quot;[^\&quot;]*\&quot;)*[^\&quot;]*$)&quot;, -1);</span>
 <span class="fc" id="L46">		    	 Book newBook = new Book(tokens[0] , tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6], tokens[7], tokens[8], tokens[9]);</span>
-<span class="fc" id="L47">		         list.add(newBook);</span>
+<span class="fc" id="L47">		         map.put(newBook.getTitle(), newBook);</span>
 <span class="fc" id="L48">		    }</span>
 		}
 <span class="nc" id="L50">		catch (Exception e) {</span>
 <span class="nc" id="L51">			e.printStackTrace();</span>
 <span class="fc" id="L52">		}</span>
 		
-<span class="fc" id="L54">		return list;</span>
+<span class="fc" id="L54">		return map;</span>
 	}
 	
 	public void extractFromDataset() {
@@ -61,7 +61,7 @@ public class ExtractDataset {
 	
 	public void extractFromDatasetParallel() {
 		try {
-<span class="fc" id="L64">			CompletableFuture&lt;List&lt;Book&gt;&gt; future = CompletableFuture.supplyAsync(() -&gt; extractBooks());</span>
+<span class="fc" id="L64">			CompletableFuture&lt;HashMap&lt;String, Book&gt;&gt; future = CompletableFuture.supplyAsync(() -&gt; extractBooks());</span>
 <span class="fc" id="L65">			reviews = extractReviews();</span>
 <span class="fc" id="L66">			books = future.get();</span>
 <span class="fc" id="L67">			System.out.println(&quot;Books: &quot; + books.size() + &quot;\nReviews: &quot; + reviews.size());</span>
@@ -71,7 +71,7 @@ public class ExtractDataset {
 <span class="fc" id="L71">		}</span>
 <span class="fc" id="L72">	}</span>
 	
-	public List&lt;Book&gt; getBooks() {
+	public HashMap&lt;String, Book&gt; getBooks() {
 <span class="fc" id="L75">		return books;</span>
 	}
 	

@@ -1,6 +1,7 @@
 package org;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -9,13 +10,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ExtractDataTest {
-
-	public static List<Book> booksSeq;
-	public static List<Book> booksPar;
+	
+	public static HashMap<String, Book> booksSeq;
+	public static HashMap<String, Book> booksPar;
 	public static List<Review> reviewsSeq;
 	public static List<Review> reviewsPar;
 	
-	/*
+	
 	@BeforeClass
 	public static void setUp() {
 		ExtractDataset ed = new ExtractDataset();
@@ -43,11 +44,11 @@ public class ExtractDataTest {
 	}
 	
 	@AfterClass
-	public void cleanUp() {
+	public static void cleanUp() {
 		System.out.println("\ncleanUp");
-		booksSeq = new ArrayList<>();
+		booksSeq = new HashMap<>();
 		reviewsSeq = new ArrayList<>();
-		booksPar = new ArrayList<>();
+		booksPar = new HashMap<>();
 		reviewsPar = new ArrayList<>();
-	}*/
+	}
 }

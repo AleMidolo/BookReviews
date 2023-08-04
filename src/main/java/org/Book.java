@@ -1,5 +1,8 @@
 package org;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Book {
 
 	private String title;
@@ -12,7 +15,8 @@ public class Book {
 	private String infoLink;
 	private String categories;
 	private String ratingCount;
-	private Integer numberOfReviews;
+	private List<Review> reviews;
+	private double mediumScore;
 	
 	public Book(String title, String description, String authors, String image, String previewLink, String publisher, String publishedDate, String infoLink, String categories, String ratingCount) {
 		this.title = title;
@@ -25,7 +29,8 @@ public class Book {
 		this.infoLink = infoLink;
 		this.categories = categories;
 		this.ratingCount = ratingCount;
-		numberOfReviews = 0;
+		reviews = new ArrayList<>();
+		mediumScore = 0.0;
 	}
 
 	public String getTitle() {
@@ -68,12 +73,28 @@ public class Book {
 		return ratingCount;
 	}
 	
-	public Integer getNumberOfReviews() {
-		return numberOfReviews;
+	public List<Review> getReviews() {
+		return reviews;
 		
 	}
 	
-	public void setNumberOfReviews(Integer nor) {
-		numberOfReviews = nor;
+	public void addReview(Review r) {
+		reviews.add(r);
+	}
+	
+	public void updateMediumScore() {
+		Double total = reviews.stream().
+			map(r -> Double.valueOf(r.getScore())).
+			reduce(0.0, (acc, v) -> acc + v);
+		
+		mediumScore = total / reviews.size();
+	}
+	
+	public double getMediumScore() {
+		return mediumScore;
+	}
+	
+	public void resetReviews() {
+		reviews = new ArrayList<>();
 	}
 }
