@@ -6,155 +6,157 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.MultiValuedMap;
 
-<span class="nc" id="L10">public class MainClass {</span>
+
+<span class="nc" id="L12">public class MainClass {</span>
 		
 	public static final String COMMA_DELIMITER = &quot;,&quot;;
 	
-	public static void main(String[] args) {
-<span class="nc" id="L15">		ExtractDataset ed = new ExtractDataset();</span>
-<span class="nc" id="L16">		ed.extractFromDatasetParallel();</span>
-<span class="nc" id="L17">		HashMap&lt;String, Book&gt; books = ed.getBooks();</span>
-<span class="nc" id="L18">		List&lt;Review&gt; reviews = ed.getReviews();</span>
-<span class="nc" id="L19">		extractMostReviewedAuthor(books, reviews);</span>
-<span class="nc" id="L20">	}</span>
-	
-	public static Optional&lt;Author&gt; extractMostReviewedAuthor(HashMap&lt;String, Book&gt; books, List&lt;Review&gt; reviews) {
-<span class="fc" id="L23">		ExtractData extractor = new ExtractData(books, reviews);</span>
+	public static Optional&lt;Author&gt; extractMostReviewedAuthor(HashMap&lt;String, Book&gt; books, MultiValuedMap&lt;String, Review&gt; reviews) {
+<span class="fc" id="L17">		ExtractData extractor = new ExtractData(books, reviews);</span>
 
-<span class="fc" id="L25">		HashMap&lt;String, Author&gt; authors = extractor.getAuthors();</span>
-<span class="fc" id="L26">		Optional&lt;Book&gt; book = extractor.getMostReviewedBook();</span>
+<span class="fc" id="L19">		HashMap&lt;String, Author&gt; authors = extractor.getAuthors();</span>
+<span class="fc" id="L20">		Optional&lt;Book&gt; book = extractor.getMostReviewedBook();</span>
 		
-<span class="pc bpc" id="L28" title="1 of 2 branches missed.">		if(book.isPresent())</span>
-<span class="fc" id="L29">			return authors.values().stream().</span>
-<span class="fc" id="L30">					filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(book.get().getTitle()))).</span>
-<span class="fc" id="L31">					findFirst();</span>
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">		if(book.isPresent())</span>
+<span class="fc" id="L23">			return authors.values().stream().</span>
+<span class="fc" id="L24">					filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(book.get().getTitle()))).</span>
+<span class="fc" id="L25">					findFirst();</span>
 		
-<span class="nc" id="L33">		return Optional.empty();</span>
+<span class="nc" id="L27">		return Optional.empty();</span>
 	}
 	
-	public static Optional&lt;Author&gt; extractMostReviewedAuthorParallel(HashMap&lt;String, Book&gt; books, List&lt;Review&gt; reviews) {
+	public static Optional&lt;Author&gt; extractMostReviewedAuthorParallel(HashMap&lt;String, Book&gt; books, MultiValuedMap&lt;String, Review&gt; reviews) {
 		try {
-<span class="fc" id="L38">			ExtractData extractor = new ExtractData(books, reviews);</span>
-<span class="fc" id="L39">			CompletableFuture&lt;HashMap&lt;String, Author&gt;&gt; f = CompletableFuture.supplyAsync(() -&gt; extractor.getAuthors());</span>
-<span class="fc" id="L40">			Optional&lt;Book&gt; book = extractor.getMostReviewedBook();</span>
-<span class="fc" id="L41">			HashMap&lt;String, Author&gt; authors = f.get();</span>
+<span class="fc" id="L32">			ExtractData extractor = new ExtractData(books, reviews);</span>
+<span class="fc" id="L33">			CompletableFuture&lt;HashMap&lt;String, Author&gt;&gt; f = CompletableFuture.supplyAsync(() -&gt; extractor.getAuthors());</span>
+<span class="fc" id="L34">			Optional&lt;Book&gt; book = extractor.getMostReviewedBook();</span>
+<span class="fc" id="L35">			HashMap&lt;String, Author&gt; authors = f.get();</span>
 			
-<span class="pc bpc" id="L43" title="1 of 2 branches missed.">			if(book.isPresent())</span>
-<span class="fc" id="L44">				return authors.values().stream().</span>
-<span class="fc" id="L45">						filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(book.get().getTitle()))).</span>
-<span class="fc" id="L46">						findFirst();</span>
-<span class="nc" id="L47">			return Optional.empty();</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">			if(book.isPresent())</span>
+<span class="fc" id="L38">				return authors.values().stream().</span>
+<span class="fc" id="L39">						filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(book.get().getTitle()))).</span>
+<span class="fc" id="L40">						findFirst();</span>
+<span class="nc" id="L41">			return Optional.empty();</span>
 			
 		}
-<span class="nc" id="L50">		catch(Exception e) {</span>
-<span class="nc" id="L51">			e.printStackTrace();</span>
-<span class="nc" id="L52">			return Optional.empty();</span>
+<span class="nc" id="L44">		catch(Exception e) {</span>
+<span class="nc" id="L45">			e.printStackTrace();</span>
+<span class="nc" id="L46">			return Optional.empty();</span>
 		}
 	}
 	
-	public static Optional&lt;Author&gt; extractLeastReviewedAuthor(HashMap&lt;String, Book&gt; books, List&lt;Review&gt; reviews) {
-<span class="fc" id="L57">		ExtractData extractor = new ExtractData(books, reviews);</span>
-<span class="fc" id="L58">		HashMap&lt;String, Author&gt; authors = extractor.getAuthors();</span>
-<span class="fc" id="L59">		Optional&lt;Book&gt; leastBook = extractor.getLeastReviewedBook();</span>
+	public static Optional&lt;Author&gt; extractLeastReviewedAuthor(HashMap&lt;String, Book&gt; books, MultiValuedMap&lt;String, Review&gt; reviews) {
+<span class="fc" id="L51">		ExtractData extractor = new ExtractData(books, reviews);</span>
+<span class="fc" id="L52">		HashMap&lt;String, Author&gt; authors = extractor.getAuthors();</span>
+<span class="fc" id="L53">		Optional&lt;Book&gt; leastBook = extractor.getLeastReviewedBook();</span>
 		
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">		if(leastBook.isPresent())</span>
-<span class="fc" id="L62">			return authors.values().stream().</span>
-<span class="fc" id="L63">					filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(leastBook.get().getTitle()))).</span>
-<span class="fc" id="L64">					findFirst();</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">		if(leastBook.isPresent())</span>
+<span class="fc" id="L56">			return authors.values().stream().</span>
+<span class="fc" id="L57">					filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(leastBook.get().getTitle()))).</span>
+<span class="fc" id="L58">					findFirst();</span>
 		else
-<span class="nc" id="L66">			return Optional.empty();</span>
+<span class="nc" id="L60">			return Optional.empty();</span>
 	}
 	
-	public static Optional&lt;Author&gt; extractLeastReviewedAuthorParallel(HashMap&lt;String, Book&gt; books, List&lt;Review&gt; reviews) {
+	public static Optional&lt;Author&gt; extractLeastReviewedAuthorParallel(HashMap&lt;String, Book&gt; books, MultiValuedMap&lt;String, Review&gt; reviews) {
 		try {
-<span class="fc" id="L71">			ExtractData extractor = new ExtractData(books, reviews);</span>
-<span class="fc" id="L72">			CompletableFuture&lt;HashMap&lt;String, Author&gt; &gt; f = CompletableFuture.supplyAsync(() -&gt; extractor.getAuthors());</span>
-<span class="fc" id="L73">			Optional&lt;Book&gt; leastBook = extractor.getLeastReviewedBook();</span>
-<span class="fc" id="L74">			HashMap&lt;String, Author&gt;  authors = f.get();</span>
+<span class="fc" id="L65">			ExtractData extractor = new ExtractData(books, reviews);</span>
+<span class="fc" id="L66">			CompletableFuture&lt;HashMap&lt;String, Author&gt; &gt; f = CompletableFuture.supplyAsync(() -&gt; extractor.getAuthors());</span>
+<span class="fc" id="L67">			Optional&lt;Book&gt; leastBook = extractor.getLeastReviewedBook();</span>
+<span class="fc" id="L68">			HashMap&lt;String, Author&gt;  authors = f.get();</span>
 			
-<span class="pc bpc" id="L76" title="1 of 2 branches missed.">			if(leastBook.isPresent())</span>
-<span class="fc" id="L77">				return authors.values().stream().</span>
-<span class="fc" id="L78">						filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(leastBook.get().getTitle()))).</span>
-<span class="fc" id="L79">						findFirst();</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">			if(leastBook.isPresent())</span>
+<span class="fc" id="L71">				return authors.values().stream().</span>
+<span class="fc" id="L72">						filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(leastBook.get().getTitle()))).</span>
+<span class="fc" id="L73">						findFirst();</span>
 			else
-<span class="nc" id="L81">				return Optional.empty();</span>
+<span class="nc" id="L75">				return Optional.empty();</span>
 		}
-<span class="nc" id="L83">		catch(Exception e) {</span>
-<span class="nc" id="L84">			e.printStackTrace();</span>
-<span class="nc" id="L85">			return Optional.empty();</span>
+<span class="nc" id="L77">		catch(Exception e) {</span>
+<span class="nc" id="L78">			e.printStackTrace();</span>
+<span class="nc" id="L79">			return Optional.empty();</span>
 		}
 	}
 	
-	public static Optional&lt;Author&gt; extractAverageReviewedAuthor(HashMap&lt;String, Book&gt; books, List&lt;Review&gt; reviews) {
-<span class="fc" id="L90">		ExtractData extractor = new ExtractData(books, reviews);</span>
-<span class="fc" id="L91">		HashMap&lt;String, Author&gt;  authors = extractor.getAuthors();</span>
-<span class="fc" id="L92">		Optional&lt;Book&gt; averageBook = extractor.getAverageReviewedBook();</span>
+	public static Optional&lt;Author&gt; extractAverageReviewedAuthor(HashMap&lt;String, Book&gt; books, MultiValuedMap&lt;String, Review&gt; reviews) {
+<span class="fc" id="L84">		ExtractData extractor = new ExtractData(books, reviews);</span>
+<span class="fc" id="L85">		HashMap&lt;String, Author&gt;  authors = extractor.getAuthors();</span>
+<span class="fc" id="L86">		Optional&lt;Book&gt; averageBook = extractor.getAverageReviewedBook();</span>
 		
-<span class="pc bpc" id="L94" title="1 of 2 branches missed.">		if(averageBook.isPresent())</span>
-<span class="fc" id="L95">			return authors.values().stream().</span>
-<span class="fc" id="L96">					filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(averageBook.get().getTitle()))).</span>
-<span class="fc" id="L97">					findFirst();</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">		if(averageBook.isPresent())</span>
+<span class="fc" id="L89">			return authors.values().stream().</span>
+<span class="fc" id="L90">					filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(averageBook.get().getTitle()))).</span>
+<span class="fc" id="L91">					findFirst();</span>
 		else
-<span class="nc" id="L99">			return Optional.empty();</span>
+<span class="nc" id="L93">			return Optional.empty();</span>
 	}
 	
-	public static Optional&lt;Author&gt; extractAverageReviewedAuthorParallel(HashMap&lt;String, Book&gt; books, List&lt;Review&gt; reviews) {
+	public static Optional&lt;Author&gt; extractAverageReviewedAuthorParallel(HashMap&lt;String, Book&gt; books, MultiValuedMap&lt;String, Review&gt; reviews) {
 		try {
-<span class="fc" id="L104">			ExtractData extractor = new ExtractData(books, reviews);</span>
-<span class="fc" id="L105">			CompletableFuture&lt;HashMap&lt;String, Author&gt; &gt; f = CompletableFuture.supplyAsync(() -&gt; extractor.getAuthors());</span>
-<span class="fc" id="L106">			Optional&lt;Book&gt; averageBook = extractor.getAverageReviewedBook();</span>
-<span class="fc" id="L107">			HashMap&lt;String, Author&gt;  authors = f.get();</span>
+<span class="fc" id="L98">			ExtractData extractor = new ExtractData(books, reviews);</span>
+<span class="fc" id="L99">			CompletableFuture&lt;HashMap&lt;String, Author&gt; &gt; f = CompletableFuture.supplyAsync(() -&gt; extractor.getAuthors());</span>
+<span class="fc" id="L100">			Optional&lt;Book&gt; averageBook = extractor.getAverageReviewedBook();</span>
+<span class="fc" id="L101">			HashMap&lt;String, Author&gt;  authors = f.get();</span>
 			
-<span class="pc bpc" id="L109" title="1 of 2 branches missed.">			if(averageBook.isPresent())</span>
-<span class="fc" id="L110">				return authors.values().stream().</span>
-<span class="fc" id="L111">						filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(averageBook.get().getTitle()))).</span>
-<span class="fc" id="L112">						findFirst();</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">			if(averageBook.isPresent())</span>
+<span class="fc" id="L104">				return authors.values().stream().</span>
+<span class="fc" id="L105">						filter(auth -&gt; auth.getBooks().stream().anyMatch(b -&gt; b.getTitle().equals(averageBook.get().getTitle()))).</span>
+<span class="fc" id="L106">						findFirst();</span>
 			else
-<span class="nc" id="L114">				return Optional.empty();</span>
+<span class="nc" id="L108">				return Optional.empty();</span>
 		}
-<span class="nc" id="L116">		catch(Exception e) {</span>
-<span class="nc" id="L117">			e.printStackTrace();</span>
-<span class="nc" id="L118">			return Optional.empty();</span>
+<span class="nc" id="L110">		catch(Exception e) {</span>
+<span class="nc" id="L111">			e.printStackTrace();</span>
+<span class="nc" id="L112">			return Optional.empty();</span>
 		}
 	}
 	
-	public static HashMap&lt;String, Author&gt; getUserForAuthor(HashMap&lt;String, Book&gt; books, List&lt;Review&gt; reviews) {
-<span class="fc" id="L123">		ExtractData extractor = new ExtractData(books, reviews);</span>
-<span class="fc" id="L124">		HashMap&lt;String, Author&gt;  authors = extractor.getAuthors();</span>
-<span class="fc" id="L125">		HashMap&lt;String, User&gt; users = extractor.getUserForAuthor();</span>
+	public static HashMap&lt;String, Author&gt; getUserForAuthor(HashMap&lt;String, Book&gt; books, MultiValuedMap&lt;String, Review&gt; reviews) {
+<span class="fc" id="L117">		ExtractData extractor = new ExtractData(books, reviews);</span>
+<span class="fc" id="L118">		HashMap&lt;String, Author&gt;  authors = extractor.getAuthors();</span>
+<span class="fc" id="L119">		HashMap&lt;String, User&gt; users = extractor.getUserForAuthor();</span>
 		
-<span class="fc" id="L127">		authors.values().forEach(author -&gt; {</span>
-<span class="fc" id="L128">			List&lt;String&gt; usersId = author.getBooks().stream().</span>
-<span class="fc" id="L129">				flatMap(b -&gt; b.getReviews().stream().map(r -&gt; r.getUserID())).</span>
-<span class="fc" id="L130">				collect(Collectors.toList());</span>
+<span class="fc" id="L121">		authors.values().forEach(author -&gt; {</span>
+<span class="fc" id="L122">			List&lt;String&gt; usersId = author.getBooks().stream().</span>
+<span class="fc" id="L123">				flatMap(b -&gt; b.getReviews().stream().map(r -&gt; r.getUserID())).</span>
+<span class="fc" id="L124">				collect(Collectors.toList());</span>
 			
-<span class="fc" id="L132">			usersId.forEach(u -&gt; author.addUser(users.get(u)));</span>
-<span class="fc" id="L133">		});</span>
-<span class="fc" id="L134">		return authors;</span>
+<span class="fc" id="L126">			usersId.forEach(u -&gt; {</span>
+<span class="fc" id="L127">				User user = users.get(u);</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">				if(u != null)</span>
+<span class="fc" id="L129">					author.addUser(user);</span>
+<span class="fc" id="L130">			});</span>
+<span class="fc" id="L131">		});</span>
+<span class="fc" id="L132">		return authors;</span>
 	}
 	
-	public static HashMap&lt;String, Author&gt; getUserForAuthorParallel(HashMap&lt;String, Book&gt; books, List&lt;Review&gt; reviews) {
+	public static HashMap&lt;String, Author&gt; getUserForAuthorParallel(HashMap&lt;String, Book&gt; books, MultiValuedMap&lt;String, Review&gt; reviews) {
 		try {
-<span class="fc" id="L139">			ExtractData extractor = new ExtractData(books, reviews);</span>
-<span class="fc" id="L140">			CompletableFuture&lt;HashMap&lt;String, Author&gt;&gt;  f = CompletableFuture.supplyAsync(() -&gt; extractor.getAuthors());</span>
-<span class="fc" id="L141">			HashMap&lt;String, User&gt; users = extractor.getUserForAuthor();</span>
-<span class="fc" id="L142">			HashMap&lt;String, Author&gt;  authors = f.get();</span>
+<span class="fc" id="L137">			ExtractData extractor = new ExtractData(books, reviews);</span>
+<span class="fc" id="L138">			CompletableFuture&lt;HashMap&lt;String, Author&gt;&gt;  f = CompletableFuture.supplyAsync(() -&gt; extractor.getAuthors());</span>
+<span class="fc" id="L139">			HashMap&lt;String, User&gt; users = extractor.getUserForAuthor();</span>
+<span class="fc" id="L140">			HashMap&lt;String, Author&gt;  authors = f.get();</span>
 			
-<span class="fc" id="L144">			authors.values().forEach(author -&gt; {</span>
-<span class="fc" id="L145">				List&lt;String&gt; usersId = author.getBooks().stream().</span>
-<span class="fc bfc" id="L146" title="All 2 branches covered.">					filter(b -&gt; b.getReviews().size() &gt; 0).</span>
-<span class="fc" id="L147">					flatMap(b -&gt; b.getReviews().stream().map(r -&gt; r.getUserID())).</span>
-<span class="fc" id="L148">					collect(Collectors.toList());</span>
+<span class="fc" id="L142">			authors.values().forEach(author -&gt; {</span>
+<span class="fc" id="L143">				List&lt;String&gt; usersId = author.getBooks().stream().</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">					filter(b -&gt; b.getReviews().size() &gt; 0).</span>
+<span class="fc" id="L145">					flatMap(b -&gt; b.getReviews().stream().map(r -&gt; r.getUserID())).</span>
+<span class="fc" id="L146">					collect(Collectors.toList());</span>
 				
-<span class="fc" id="L150">				usersId.forEach(u -&gt; author.addUser(users.get(u)));</span>
-<span class="fc" id="L151">			});</span>
+<span class="fc" id="L148">				usersId.forEach(u -&gt; {</span>
+<span class="fc" id="L149">					User user = users.get(u);</span>
+<span class="pc bpc" id="L150" title="1 of 2 branches missed.">					if(u != null)</span>
+<span class="fc" id="L151">						author.addUser(user);</span>
+<span class="fc" id="L152">				});</span>
+<span class="fc" id="L153">			});</span>
 			
-<span class="fc" id="L153">			return authors;</span>
+<span class="fc" id="L155">			return authors;</span>
 		}
-<span class="nc" id="L155">		catch(Exception e) {</span>
-<span class="nc" id="L156">			e.printStackTrace();</span>
-<span class="nc" id="L157">			return new HashMap&lt;String, Author&gt;();</span>
+<span class="nc" id="L157">		catch(Exception e) {</span>
+<span class="nc" id="L158">			e.printStackTrace();</span>
+<span class="nc" id="L159">			return new HashMap&lt;String, Author&gt;();</span>
 		}
 	}
 }

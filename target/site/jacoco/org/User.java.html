@@ -8,41 +8,27 @@ public class User {
 	private String userId;
 	private String nickName;
 	private List&lt;Review&gt; reviews;
-	private double mediumScore;
 	
-<span class="fc" id="L13">	public User(String userId, String nickName) {</span>
-<span class="fc" id="L14">		this.userId = userId;</span>
-<span class="fc" id="L15">		this.nickName = nickName;</span>
-<span class="fc" id="L16">		reviews = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L17">		mediumScore = 0.0;</span>
-<span class="fc" id="L18">	}</span>
+<span class="fc" id="L12">	public User(String userId, String nickName) {</span>
+<span class="fc" id="L13">		this.userId = userId;</span>
+<span class="fc" id="L14">		this.nickName = nickName;</span>
+<span class="fc" id="L15">		reviews = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L16">	}</span>
 	
 	public String getId() {
-<span class="fc" id="L21">		return userId;</span>
+<span class="fc" id="L19">		return userId;</span>
 	}
 	
 	public String getNickname() {
-<span class="nc" id="L25">		return nickName;</span>
+<span class="fc" id="L23">		return nickName;</span>
 	}
 	
 	public List&lt;Review&gt; getReviews() {
-<span class="nc" id="L29">		return reviews;</span>
+<span class="fc" id="L27">		return reviews;</span>
 	}
 	
 	public void addReview(Review r) {
-<span class="fc" id="L33">		reviews.add(r);</span>
-<span class="fc" id="L34">	}</span>
-	
-	public void updateMediumScore() {
-<span class="nc" id="L37">		Double total = reviews.stream().</span>
-<span class="nc" id="L38">			map(r -&gt; Double.valueOf(r.getScore())).</span>
-<span class="nc" id="L39">			reduce(0.0, (acc, v) -&gt; acc + v);</span>
-		
-<span class="nc" id="L41">		mediumScore = total / reviews.size();</span>
-<span class="nc" id="L42">	}</span>
-	
-	public Double getMediumScore() {
-<span class="nc" id="L45">		return mediumScore;</span>
-	}
+<span class="fc" id="L31">		reviews.add(r);</span>
+<span class="fc" id="L32">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -8,13 +8,11 @@ public class User {
 	private String userId;
 	private String nickName;
 	private List<Review> reviews;
-	private double mediumScore;
 	
 	public User(String userId, String nickName) {
 		this.userId = userId;
 		this.nickName = nickName;
 		reviews = new ArrayList<>();
-		mediumScore = 0.0;
 	}
 	
 	public String getId() {
@@ -31,17 +29,5 @@ public class User {
 	
 	public void addReview(Review r) {
 		reviews.add(r);
-	}
-	
-	public void updateMediumScore() {
-		Double total = reviews.stream().
-			map(r -> Double.valueOf(r.getScore())).
-			reduce(0.0, (acc, v) -> acc + v);
-		
-		mediumScore = total / reviews.size();
-	}
-	
-	public Double getMediumScore() {
-		return mediumScore;
 	}
 }

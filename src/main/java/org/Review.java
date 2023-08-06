@@ -2,7 +2,7 @@ package org;
 
 public class Review {
 	
-	public String id;
+	public String bookID;
 	public String title;
 	public String price;
 	public String userID;
@@ -13,8 +13,8 @@ public class Review {
 	public String summary;
 	public String text;
 	
-	public Review(String id, String title, String price, String userID, String profileName, String helpfulness, String score, String time, String summary, String text) {
-		this.id = id;
+	public Review(String bookID, String title, String price, String userID, String profileName, String helpfulness, String score, String time, String summary, String text) {
+		this.bookID = bookID;
 		this.title = title;
 		this.price = price;
 		this.userID = userID;
@@ -26,8 +26,8 @@ public class Review {
 		this.text = text;
 	}
 	
-	public String getId() {
-		return id;
+	public String getBookId() {
+		return bookID;
 	}
 	public String getTitle() {
 		return title;

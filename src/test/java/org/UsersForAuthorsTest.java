@@ -1,11 +1,13 @@
 package org;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -14,7 +16,7 @@ import org.junit.Test;
 public class UsersForAuthorsTest {
 	
 	public static HashMap<String, Book> books = new HashMap<>();
-	public static List<Review> reviews = new ArrayList<>();
+	public static MultiValuedMap<String, Review> reviews = new ArrayListValuedHashMap<>();
 	public static HashMap<String, Author> authorsSeq;
 	public static HashMap<String, Author> authorsPar;
 	
@@ -37,42 +39,69 @@ public class UsersForAuthorsTest {
 	}
 	
 	@Test
-	public void usersSizeTest() {
-		System.out.println("\nusersSizeTest");
-		Optional<Author> authSeq = authorsSeq.values().stream().
-				filter(a -> a.getUsers().size() > 0).
-				findFirst();
+	public void authorsMapTest() {
+		System.out.println("\nauthorsMapTest");
 		
-		Author authPar = authorsPar.get(authSeq.get().getFullName());
+		Predicate<Map.Entry<String, Author>> checkAllFields = v -> {
+			Author aSeq = v.getValue();
+			Author aPar = authorsPar.get(v.getKey());
+			
+			if(aPar == null)
+				return false;
+			
+			if(!aSeq.getFullName().equals(aPar.getFullName()))
+				return false;
+			
+			if(aSeq.getBooks().size() != aPar.getBooks().size())
+				return false;
+			
+			if(aSeq.getUsers().size() != aPar.getUsers().size())
+				return false;
+			
+			return true;
+		};
 		
-		System.out.println("Number of Users for Author " + authSeq.get().getFullName() + ": " + authSeq.get().getUsers().size() + "---" + authPar.getUsers().size());
-		Assert.assertEquals(authSeq.get().getUsers().size(), authPar.getUsers().size());
+		Assert.assertTrue(authorsSeq.entrySet().stream().allMatch(checkAllFields));
 	}
 	
 	@Test
-	public void getUserTest() {
-		System.out.println("\ngetUserTest");
-		Optional<Author> authSeq = authorsSeq.values().stream().
-				filter(a -> a.getUsers().size() > 0).
-				findFirst();
-		Author authPar = authorsPar.get(authSeq.get().getFullName());
+	public void getAllUsersTest() {
 		
-		List<User> usersSeq = new ArrayList<>(authSeq.get().getUsers());
-		User userSeq = usersSeq.get(0);
-		Optional<User> userPar = authPar.getUsers().stream().
-				filter(u -> u.getId().equals(userSeq.getId())).
-				findFirst();
+		Predicate<Map.Entry<String, Author>> checkAllUsers = v -> {
+			Author aSeq = v.getValue();
+			Author aPar = authorsPar.get(v.getKey());
+			
+			if(aPar == null)
+				return false;
+			
+			for(User uSeq : aSeq.getUsers()) {
+				if(uSeq == null)
+					continue;
+				Optional<User> uPar = aPar.getUsers().stream().
+					filter(usr -> usr != null).
+					filter(usr -> usr.getId().equals(uSeq.getId())).
+					findFirst();
+				if(uPar.isEmpty())
+					return false;
+				
+				if(!uSeq.getNickname().equals(uPar.get().getNickname()))
+					return false;
+				
+				if(uSeq.getReviews().size() != uPar.get().getReviews().size())
+					return false;
+			}
+			return true;
+		};
 		
-		Assert.assertTrue(userPar.isPresent());
-		if(userPar.isPresent())
-			System.out.println("UserID: " + userSeq.getId() + "---" + userPar.get().getId());
+		System.out.println("\ngetAllUsersTest");
+		Assert.assertTrue(authorsSeq.entrySet().stream().allMatch(checkAllUsers));
 	}
 	
 	@AfterClass
 	public static void cleanUp() {
 		System.out.println("\ncleanUp");
 		books = new HashMap<>();
-		reviews = new ArrayList<>();
+		reviews = new ArrayListValuedHashMap<>();
 		authorsSeq = new HashMap<>();
 		authorsPar = new HashMap<>();
 	}

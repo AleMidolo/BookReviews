@@ -2,38 +2,39 @@ package org;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 
 
 public class ExtractDataset {
 	
 	private HashMap<String, Book> books;
-	private List<Review> reviews;
+	private MultiValuedMap<String, Review> reviews;
 	
 	public ExtractDataset() {
 		books = new HashMap<>();
-		reviews = new ArrayList<>();
+		reviews = new ArrayListValuedHashMap<>();
 	}
 
-	private List<Review> extractReviews() {
+	private MultiValuedMap<String, Review> extractReviews() {
 		System.out.println("Extract Reviews...");
-		List<Review> list = new ArrayList<>();
+		MultiValuedMap<String, Review> map = new ArrayListValuedHashMap<>();
 		try (BufferedReader br = new BufferedReader(new FileReader("books_rating.csv"))) {
 		    String line = br.readLine();
 		    while ((line = br.readLine()) != null) {
 		    	 String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 		    	 String title = tokens[1].replace("\"", "");
 		    	 Review review = new Review(tokens[0] , title, tokens[2], tokens[3], tokens[4], tokens[5], tokens[6], tokens[7], tokens[8], tokens[9]);
-		         list.add(review);
+		         map.put(review.getBookId() ,review);
 		    }
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		return list;
+		return map;
 	}
 	
 	private HashMap<String, Book> extractBooks(){
@@ -75,7 +76,7 @@ public class ExtractDataset {
 		return books;
 	}
 	
-	public List<Review> getReviews() {
+	public MultiValuedMap<String, Review> getReviews() {
 		return reviews;
 	}
 }

@@ -1,11 +1,11 @@
 package org;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -14,7 +14,7 @@ import org.junit.Test;
 public class AverageReviewedAuthorTest {
 	
 	public static HashMap<String, Book> books = new HashMap<>();
-	public static List<Review> reviews = new ArrayList<>();
+	public static MultiValuedMap<String, Review> reviews = new ArrayListValuedHashMap<>();
 	public static Optional<Author> authorSeq;
 	public static Optional<Author> authorPar;
 	
@@ -72,6 +72,6 @@ public class AverageReviewedAuthorTest {
 	public static void cleanUp() {
 		System.out.println("\ncleanUp");
 		books = new HashMap<>();
-		reviews = new ArrayList<>();
+		reviews = new ArrayListValuedHashMap<>();
 	}
 }

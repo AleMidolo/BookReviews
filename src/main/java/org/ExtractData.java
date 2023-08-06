@@ -2,19 +2,20 @@ package org;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 
+import org.apache.commons.collections4.MultiValuedMap;
+
 
 public class ExtractData {
 	
 	private HashMap<String, Book> books;
-	private List<Review> reviews;
+	private MultiValuedMap<String, Review> reviews;
 	
-	public ExtractData(HashMap<String, Book> books, List<Review> reviews) {
+	public ExtractData(HashMap<String, Book> books, MultiValuedMap<String, Review> reviews) {
 		this.books = books;
 		this.reviews = reviews;
 	}
@@ -23,7 +24,7 @@ public class ExtractData {
 		return books;
 	}
 	
-	public List<Review> getReviews() {
+	public MultiValuedMap<String, Review> getReviews() {
 		return reviews;
 	}
 	
@@ -49,7 +50,7 @@ public class ExtractData {
 		System.out.println("getUserForAuthor");
 		HashMap<String, User> users = new HashMap<>();
 		
-		reviews.forEach(r -> {
+		reviews.values().forEach(r -> {
 			User user = users.get(r.getUserID());
 			
 			if(user != null)
@@ -68,7 +69,7 @@ public class ExtractData {
 	public void updateBooksReviews() {
 		System.out.println("getReviewsForBook");
 		books.values().forEach(b -> b.resetReviews());
-		reviews.forEach(r -> {
+		reviews.values().forEach(r -> {
 			Book b = books.get(r.getTitle());
 			if(b != null)
 				b.addReview(r);

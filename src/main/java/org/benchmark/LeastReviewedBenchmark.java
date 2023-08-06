@@ -1,14 +1,14 @@
 package org.benchmark;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.Book;
 import org.ExtractDataset;
 import org.MainClass;
 import org.Review;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Level;
@@ -25,7 +25,7 @@ public class LeastReviewedBenchmark {
     public static class MyState {
 
 		HashMap<String, Book> books = new HashMap<>();
-		List<Review> reviews = new ArrayList<>();
+		MultiValuedMap<String, Review> reviews = new ArrayListValuedHashMap<>();
 
 		@Setup(Level.Trial)
 		public void setUp() {

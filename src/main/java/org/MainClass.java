@@ -6,20 +6,14 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.MultiValuedMap;
+
 
 public class MainClass {
 		
 	public static final String COMMA_DELIMITER = ",";
 	
-	public static void main(String[] args) {
-		ExtractDataset ed = new ExtractDataset();
-		ed.extractFromDatasetParallel();
-		HashMap<String, Book> books = ed.getBooks();
-		List<Review> reviews = ed.getReviews();
-		extractMostReviewedAuthor(books, reviews);
-	}
-	
-	public static Optional<Author> extractMostReviewedAuthor(HashMap<String, Book> books, List<Review> reviews) {
+	public static Optional<Author> extractMostReviewedAuthor(HashMap<String, Book> books, MultiValuedMap<String, Review> reviews) {
 		ExtractData extractor = new ExtractData(books, reviews);
 
 		HashMap<String, Author> authors = extractor.getAuthors();
@@ -33,7 +27,7 @@ public class MainClass {
 		return Optional.empty();
 	}
 	
-	public static Optional<Author> extractMostReviewedAuthorParallel(HashMap<String, Book> books, List<Review> reviews) {
+	public static Optional<Author> extractMostReviewedAuthorParallel(HashMap<String, Book> books, MultiValuedMap<String, Review> reviews) {
 		try {
 			ExtractData extractor = new ExtractData(books, reviews);
 			CompletableFuture<HashMap<String, Author>> f = CompletableFuture.supplyAsync(() -> extractor.getAuthors());
@@ -53,7 +47,7 @@ public class MainClass {
 		}
 	}
 	
-	public static Optional<Author> extractLeastReviewedAuthor(HashMap<String, Book> books, List<Review> reviews) {
+	public static Optional<Author> extractLeastReviewedAuthor(HashMap<String, Book> books, MultiValuedMap<String, Review> reviews) {
 		ExtractData extractor = new ExtractData(books, reviews);
 		HashMap<String, Author> authors = extractor.getAuthors();
 		Optional<Book> leastBook = extractor.getLeastReviewedBook();
@@ -66,7 +60,7 @@ public class MainClass {
 			return Optional.empty();
 	}
 	
-	public static Optional<Author> extractLeastReviewedAuthorParallel(HashMap<String, Book> books, List<Review> reviews) {
+	public static Optional<Author> extractLeastReviewedAuthorParallel(HashMap<String, Book> books, MultiValuedMap<String, Review> reviews) {
 		try {
 			ExtractData extractor = new ExtractData(books, reviews);
 			CompletableFuture<HashMap<String, Author> > f = CompletableFuture.supplyAsync(() -> extractor.getAuthors());
@@ -86,7 +80,7 @@ public class MainClass {
 		}
 	}
 	
-	public static Optional<Author> extractAverageReviewedAuthor(HashMap<String, Book> books, List<Review> reviews) {
+	public static Optional<Author> extractAverageReviewedAuthor(HashMap<String, Book> books, MultiValuedMap<String, Review> reviews) {
 		ExtractData extractor = new ExtractData(books, reviews);
 		HashMap<String, Author>  authors = extractor.getAuthors();
 		Optional<Book> averageBook = extractor.getAverageReviewedBook();
@@ -99,7 +93,7 @@ public class MainClass {
 			return Optional.empty();
 	}
 	
-	public static Optional<Author> extractAverageReviewedAuthorParallel(HashMap<String, Book> books, List<Review> reviews) {
+	public static Optional<Author> extractAverageReviewedAuthorParallel(HashMap<String, Book> books, MultiValuedMap<String, Review> reviews) {
 		try {
 			ExtractData extractor = new ExtractData(books, reviews);
 			CompletableFuture<HashMap<String, Author> > f = CompletableFuture.supplyAsync(() -> extractor.getAuthors());
@@ -119,7 +113,7 @@ public class MainClass {
 		}
 	}
 	
-	public static HashMap<String, Author> getUserForAuthor(HashMap<String, Book> books, List<Review> reviews) {
+	public static HashMap<String, Author> getUserForAuthor(HashMap<String, Book> books, MultiValuedMap<String, Review> reviews) {
 		ExtractData extractor = new ExtractData(books, reviews);
 		HashMap<String, Author>  authors = extractor.getAuthors();
 		HashMap<String, User> users = extractor.getUserForAuthor();
@@ -129,12 +123,16 @@ public class MainClass {
 				flatMap(b -> b.getReviews().stream().map(r -> r.getUserID())).
 				collect(Collectors.toList());
 			
-			usersId.forEach(u -> author.addUser(users.get(u)));
+			usersId.forEach(u -> {
+				User user = users.get(u);
+				if(u != null)
+					author.addUser(user);
+			});
 		});
 		return authors;
 	}
 	
-	public static HashMap<String, Author> getUserForAuthorParallel(HashMap<String, Book> books, List<Review> reviews) {
+	public static HashMap<String, Author> getUserForAuthorParallel(HashMap<String, Book> books, MultiValuedMap<String, Review> reviews) {
 		try {
 			ExtractData extractor = new ExtractData(books, reviews);
 			CompletableFuture<HashMap<String, Author>>  f = CompletableFuture.supplyAsync(() -> extractor.getAuthors());
@@ -147,7 +145,11 @@ public class MainClass {
 					flatMap(b -> b.getReviews().stream().map(r -> r.getUserID())).
 					collect(Collectors.toList());
 				
-				usersId.forEach(u -> author.addUser(users.get(u)));
+				usersId.forEach(u -> {
+					User user = users.get(u);
+					if(u != null)
+						author.addUser(user);
+				});
 			});
 			
 			return authors;
